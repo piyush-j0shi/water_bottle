@@ -1,0 +1,90 @@
+.home-page {
+  overflow: hidden;
+}
+
+.manifesto-section {
+  padding: 200px 0;
+  background-color: var(--color-background);
+}
+
+.manifesto-mask {
+  overflow: hidden;
+}
+
+.manifesto-mask h2 {
+  font-size: clamp(3rem, 6vw, 5rem);
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+}
+
+/* Horizontal Scroll Hijack */
+.horizontal-scroll-container {
+  height: 200vh; /* tighter scroll distance to avoid blank space */
+  background-color: var(--color-surface);
+  position: relative;
+}
+
+.sticky-wrapper {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  padding: 100px 0;
+}
+
+.horizontal-scroll-header {
+  padding: 0 var(--spacing-4);
+  margin-bottom: 60px;
+}
+
+.horizontal-scroll-header h2 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  margin-bottom: 8px;
+}
+
+.horizontal-scroll-track {
+  display: flex;
+  gap: 80px;
+  padding: 0 50vw 0 var(--spacing-4);
+  width: max-content;
+}
+
+.horizontal-card {
+  width: 400px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .horizontal-card {
+    width: 280px;
+  }
+}
+
+.horizontal-card img {
+  width: 100%;
+  aspect-ratio: 4/5;
+  object-fit: cover;
+  border-radius: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+  transition: transform 0.6s ease;
+}
+
+.horizontal-card:hover img {
+  transform: scale(1.05);
+}
+
+.horizontal-card-info h3 {
+  font-size: 1.5rem;
+  margin-bottom: 4px;
+}
+
+.horizontal-card-info p {
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}

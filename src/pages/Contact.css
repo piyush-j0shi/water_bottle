@@ -1,0 +1,134 @@
+.contact-page {
+  padding-top: 200px;
+  padding-bottom: 120px;
+  background-color: var(--color-background);
+  min-height: 100vh;
+}
+
+.contact-header {
+  margin-bottom: 80px;
+}
+
+.contact-header h1 {
+  font-size: clamp(4rem, 8vw, 7rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 80px;
+}
+
+@media (min-width: 1024px) {
+  .contact-grid {
+    grid-template-columns: 1fr 1.2fr;
+    gap: 120px;
+  }
+}
+
+.contact-intro {
+  font-size: 1.5rem;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+  margin-bottom: 64px;
+}
+
+.info-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.info-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.info-card svg {
+  color: var(--color-accent);
+  margin-bottom: 8px;
+}
+
+.info-card h3 {
+  font-size: 1.25rem;
+  margin-bottom: 4px;
+}
+
+.info-card p {
+  color: var(--color-text-secondary);
+  font-size: 1rem;
+}
+
+.contact-form-container {
+  background-color: var(--color-surface);
+  padding: 48px;
+  border-radius: 24px;
+  border: 1px solid var(--color-border);
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.contact-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.contact-form label {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.contact-form input,
+.contact-form textarea {
+  background-color: transparent;
+  border: none;
+  border-bottom: 2px solid var(--color-border);
+  padding: 12px 0;
+  font-size: 1.25rem;
+  color: var(--color-text-primary);
+  font-family: inherit;
+  transition: border-color var(--transition-fast);
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+  outline: none;
+  border-bottom-color: var(--color-accent);
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.125rem;
+}
+
+.success-message {
+  text-align: center;
+  padding: 64px 0;
+}
+
+.success-message h3 {
+  font-size: 2rem;
+  margin-bottom: 16px;
+  color: #10b981;
+}
+
+.success-message p {
+  color: var(--color-text-secondary);
+  margin-bottom: 40px;
+  font-size: 1.125rem;
+}
