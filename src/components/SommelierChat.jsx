@@ -61,7 +61,7 @@ const SommelierChat = () => {
     <>
       <button 
         className="sommelier-fab" 
-        onClick={() => setIsOpen(true)}
+        onClick={() => setIsOpen(prev => !prev)}
         title="Consult the Water Sommelier"
       >
         <Bot size={24} />
