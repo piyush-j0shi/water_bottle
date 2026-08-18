@@ -363,32 +363,57 @@ const CustomStudio = () => {
           <div className="pdf-footer">Awwwards Water Bottle Co. - Confidential Blueprint</div>
         </div>
 
-        {/* PAGE 2: BLUEPRINT */}
+        {/* PAGE 2: BLUEPRINT / SPECIFICATION */}
         <div id="pdf-page-2" className="pdf-template-page">
           <div className="pdf-header">
-            <h1 style={{ fontFamily: 'serif' }}>Custom Blueprint</h1>
-            <div className="pdf-divider"></div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+              <h1 style={{ fontFamily: 'serif', margin: 0 }}>Specification Sheet</h1>
+              <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '1.1rem', paddingBottom: '8px' }}>
+                {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+              </span>
+            </div>
+            <div className="pdf-divider" style={{ marginTop: '20px' }}></div>
           </div>
           
-          <div className="pdf-blueprint-body">
-            <div className="pdf-image-container">
-              <img id="pdf-captured-image" src="" alt="Custom Bottle" />
+          <div className="pdf-spec-grid">
+            {/* Left Column: Image & Base Specs */}
+            <div className="pdf-image-col">
+              <div className="pdf-image-container">
+                <img id="pdf-captured-image" src="" alt="Custom Bottle" />
+              </div>
+              <div className="pdf-base-specs">
+                <h4>Technical Data</h4>
+                <div className="spec-row"><span>Base Model:</span> <strong>{selectedProduct.name}</strong></div>
+                <div className="spec-row"><span>Material Core:</span> <strong>{selectedProduct.material}</strong></div>
+                <div className="spec-row"><span>Capacity:</span> <strong>Standard Issue</strong></div>
+              </div>
             </div>
             
-            <div className="pdf-specs">
-              <div className="spec-row"><span>Engraving Name:</span> <strong>{engravingText || 'None'}</strong></div>
-              <div className="spec-row"><span>Font Style:</span> <strong>{fontStyle === 'var(--font-family)' ? 'Modern' : fontStyle === 'serif' ? 'Classic' : 'Technical'}</strong></div>
-              <div className="spec-row"><span>Orientation:</span> <strong>{orientation}</strong></div>
-              <div className="spec-row"><span>Engraving Color:</span> <strong>{FANCY_COLORS.find(c => c.hex === engravingColor)?.name || engravingColor}</strong></div>
+            {/* Right Column: Configuration & Cost Breakdown */}
+            <div className="pdf-cost-col">
+              <h4 style={{ marginBottom: '24px' }}>Bespoke Configuration</h4>
               
-              <div className="pdf-receipt">
-                <div className="receipt-row"><span>Base Price</span> <span>{displayPrice(basePrice)}</span></div>
-                <div className="receipt-row"><span>Custom Studio Fee</span> <span>+{displayPrice(customFee)}</span></div>
-                <div className="receipt-total"><span>Total Transaction</span> <span>{displayPrice(basePrice + customFee)}</span></div>
+              <div className="spec-row"><span>Engraving Name:</span> <strong>{engravingText || 'None'}</strong></div>
+              <div className="spec-row"><span>Typography Style:</span> <strong>{fontStyle === 'var(--font-family)' ? 'Modern' : fontStyle === 'serif' ? 'Classic' : 'Technical'}</strong></div>
+              <div className="spec-row"><span>Laser Orientation:</span> <strong>{orientation}</strong></div>
+              <div className="spec-row"><span>Finish Color:</span> <strong>{FANCY_COLORS.find(c => c.hex === engravingColor)?.name || engravingColor}</strong></div>
+              
+              <div className="pdf-receipt" style={{ marginTop: 'auto' }}>
+                <h4 style={{ color: 'rgba(255,255,255,0.5)', marginBottom: '24px' }}>Investment Summary</h4>
+                
+                <div className="receipt-row"><span>Base Instrument</span> <span>{displayPrice(basePrice)}</span></div>
+                <div className="receipt-row"><span>Custom Studio Integration</span> <span>+{displayPrice(customFee)}</span></div>
+                <div className="receipt-row"><span>Taxes & Handling</span> <span>Included</span></div>
+                
+                <div className="receipt-total" style={{ borderTop: '1px solid rgba(255,255,255,0.2)', marginTop: '24px', paddingTop: '24px' }}>
+                  <span style={{ fontSize: '1.5rem', fontWeight: '400' }}>Total Price</span> 
+                  <span style={{ fontSize: '1.75rem' }}>{displayPrice(basePrice + customFee)}</span>
+                </div>
               </div>
             </div>
           </div>
-          <div className="pdf-footer">Awwwards Water Bottle Co. - 1 of 1 Edition</div>
+          
+          <div className="pdf-footer" style={{ marginTop: '40px' }}>Awwwards Water Bottle Co. - Configurator Export</div>
         </div>
       </div>
     </div>
