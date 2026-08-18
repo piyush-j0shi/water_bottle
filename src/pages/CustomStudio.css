@@ -88,29 +88,44 @@
 
 .engraving-overlay {
   position: absolute;
-  top: 60%;
+  top: 55%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 10;
-  width: 100%;
+  width: 100%; 
   text-align: center;
   pointer-events: none;
   perspective: 1000px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .engraved-text {
-  font-size: clamp(1.5rem, 3vw, 2.5rem);
+  font-size: clamp(1rem, 2.5vw, 1.8rem);
   font-weight: 800;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  /* Ultra-realistic imprint/engraving effect */
+  /* Aggressive squeeze to fit on cylinder without wrapping */
+  transform: rotateX(5deg) scaleX(0.7) rotateY(-5deg);
   text-shadow: 
-    -1px -1px 2px rgba(0, 0, 0, 0.8),
-    1px 1px 2px rgba(255, 255, 255, 0.4),
-    0 0 10px rgba(0, 0, 0, 0.2);
+    -1px -1px 1px rgba(0, 0, 0, 0.6),
+    1px 1px 1px rgba(255, 255, 255, 0.2),
+    0 0 5px rgba(0, 0, 0, 0.3);
   mix-blend-mode: overlay;
-  opacity: 0.85;
-  filter: drop-shadow(0px 2px 2px rgba(0,0,0,0.5));
+  opacity: 0.9;
+  filter: drop-shadow(0px 1px 2px rgba(0,0,0,0.4));
+  white-space: nowrap; /* PREVENTS WRAPPING */
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.engraved-text.vertical {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  letter-spacing: 0.2em;
+  font-size: clamp(0.9rem, 1.5vw, 1.25rem); /* Even smaller for vertical to fit height */
+  transform: rotateX(5deg) scaleX(0.9) rotateY(-5deg);
 }
 
 .product-selector-carousel {
@@ -223,6 +238,13 @@
   border-color: var(--color-text-primary);
 }
 
+.color-name-display {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  font-style: italic;
+  margin-top: -4px;
+}
+
 .studio-price-box {
   background-color: var(--color-surface);
   padding: 20px;
@@ -250,13 +272,171 @@
   margin-top: 4px;
 }
 
-.studio-buy-btn {
+.studio-buy-btn, .studio-pdf-btn {
   width: 100%;
   padding: 16px;
   font-size: 1.1rem;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.studio-pdf-btn {
+  background-color: transparent;
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  transition: all var(--transition-fast);
+}
+
+.studio-pdf-btn:hover:not(:disabled) {
+  border-color: var(--color-text-primary);
+}
+
+.studio-pdf-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .studio-buy-btn.added {
   background-color: #10b981;
   color: white;
+}
+
+/* =========================================
+   LUXURY PDF TEMPLATE STYLES
+   ========================================= */
+.pdf-template-page {
+  width: 800px;
+  height: 1131px; /* A4 Ratio */
+  background-color: #0a0a0a;
+  color: #ffffff;
+  padding: 80px;
+  box-sizing: border-box;
+  font-family: var(--font-family);
+  display: flex;
+  flex-direction: column;
+}
+
+.pdf-header h1 {
+  font-size: 3rem;
+  letter-spacing: -0.02em;
+  margin: 0 0 20px 0;
+  font-weight: 400;
+}
+
+.pdf-divider {
+  width: 100%;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.15);
+  margin-bottom: 60px;
+}
+
+.pdf-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
+.pdf-section h3 {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0 0 12px 0;
+}
+
+.pdf-section p {
+  font-size: 1.25rem;
+  line-height: 1.6;
+  margin: 0;
+  color: #e5e5e5;
+}
+
+.pdf-footer {
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.3);
+  text-transform: uppercase;
+  text-align: center;
+  margin-top: auto;
+}
+
+.pdf-blueprint-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+}
+
+.pdf-image-container {
+  width: 100%;
+  height: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #111;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.pdf-image-container img {
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.pdf-specs {
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.spec-row {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 12px;
+}
+
+.spec-row span {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 1rem;
+}
+
+.spec-row strong {
+  font-weight: 500;
+  font-size: 1.1rem;
+}
+
+.pdf-receipt {
+  margin-top: 32px;
+  background-color: #111;
+  padding: 32px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.receipt-row {
+  display: flex;
+  justify-content: space-between;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1rem;
+}
+
+.receipt-total {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.25rem;
+  font-weight: 600;
+  border-top: 1px dashed rgba(255, 255, 255, 0.2);
+  padding-top: 16px;
+  margin-top: 8px;
+  color: #fff;
 }

@@ -1,16 +1,25 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import html2canvas from 'html2canvas';
+import { jsPDF } from 'jspdf';
 import MagneticButton from '../components/MagneticButton';
 import { products } from '../data/products';
 import { useCart } from '../context/CartContext';
 import './CustomStudio.css';
 
+const FANCY_COLORS = [
+  { hex: '#ffffff', name: 'Titanium White' },
+  { hex: '#000000', name: 'Obsidian Black' },
+  { hex: '#d4af37', name: '24K Gold' },
+  { hex: '#e5e4e2', name: 'Brushed Platinum' },
+  { hex: '#b76e79', name: 'Rose Gold' }
+];
+
 const CustomStudio = () => {
   const location = useLocation();
   const { addToCart } = useCart();
   
-  // Read ?product=id from URL, fallback to products[0]
   const queryParams = new URLSearchParams(location.search);
   const initialProductId = queryParams.get('product') || products[0].id;
 
@@ -18,15 +27,14 @@ const CustomStudio = () => {
   const [selectedProductId, setSelectedProductId] = useState(initialProductId);
   const [fontStyle, setFontStyle] = useState('var(--font-family)');
   const [engravingColor, setEngravingColor] = useState('#ffffff');
+  const [orientation, setOrientation] = useState('horizontal');
   const [isINR, setIsINR] = useState(false);
   const [isAdded, setIsAdded] = useState(false);
   
-  // Generative Canvas State
   const canvasRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
 
   useEffect(() => {
-    // Detect India Timezone for Smart Pricing
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     if (timezone === 'Asia/Calcutta' || timezone === 'Asia/Kolkata') {
       setIsINR(true);
@@ -34,7 +42,6 @@ const CustomStudio = () => {
   }, []);
 
   const selectedProduct = products.find(p => p.id === selectedProductId) || products[0];
-
   const basePrice = selectedProduct.price;
   const customFee = 15.00;
   
@@ -46,16 +53,16 @@ const CustomStudio = () => {
   };
 
   const handleAddToCart = () => {
-    // Save canvas data if drawn
     const textureData = canvasRef.current ? canvasRef.current.toDataURL() : null;
     
     addToCart({
       ...selectedProduct,
-      price: basePrice + customFee, // update price for custom
+      price: basePrice + customFee,
       customization: {
         text: engravingText,
         font: fontStyle,
         color: engravingColor,
+        orientation: orientation,
         texture: textureData
       },
       name: `${selectedProduct.name} (Custom)`
@@ -65,7 +72,6 @@ const CustomStudio = () => {
     setTimeout(() => setIsAdded(false), 2000);
   };
 
-  // Generative Canvas Logic
   const startDrawing = (e) => {
     setIsDrawing(true);
     draw(e);
@@ -82,7 +88,6 @@ const CustomStudio = () => {
 
     ctx.globalCompositeOperation = 'lighter';
     const gradient = ctx.createRadialGradient(x, y, 0, x, y, 50);
-    // Random vibrant colors for generative texture
     const r = Math.floor(Math.random() * 255);
     const g = Math.floor(Math.random() * 255);
     const b = Math.floor(Math.random() * 255);
@@ -93,6 +98,65 @@ const CustomStudio = () => {
     ctx.beginPath();
     ctx.arc(x, y, 50, 0, Math.PI * 2);
     ctx.fill();
+  };
+
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const generatePDF = async () => {
+    setIsGenerating(true);
+    try {
+      // 1. Capture the visual preview container
+      const previewEl = document.getElementById('studio-preview-capture');
+      const previewCanvas = await html2canvas(previewEl, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#111111'
+      });
+      const imgData = previewCanvas.toDataURL('image/jpeg', 1.0);
+
+      // 2. Inject image data into the hidden PDF template
+      document.getElementById('pdf-captured-image').src = imgData;
+
+      // Give the DOM a tiny moment to paint the injected image source
+      await new Promise(r => setTimeout(r, 100));
+
+      // 3. Capture Page 1 DOM
+      const page1El = document.getElementById('pdf-page-1');
+      const page1Canvas = await html2canvas(page1El, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#0a0a0a'
+      });
+      const page1Img = page1Canvas.toDataURL('image/jpeg', 1.0);
+
+      // 4. Capture Page 2 DOM
+      const page2El = document.getElementById('pdf-page-2');
+      const page2Canvas = await html2canvas(page2El, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#0a0a0a'
+      });
+      const page2Img = page2Canvas.toDataURL('image/jpeg', 1.0);
+
+      // 5. Initialize PDF and stitch it together
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+
+      // Add Page 1
+      pdf.addImage(page1Img, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+
+      // Add Page 2
+      pdf.addPage();
+      pdf.addImage(page2Img, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+
+      // 6. Download
+      pdf.save(`${selectedProduct.name.replace(/\s+/g, '_')}_Blueprint.pdf`);
+    } catch (error) {
+      console.error("PDF generation failed:", error);
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   return (
@@ -122,10 +186,9 @@ const CustomStudio = () => {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8 }}
           >
-            <div className="preview-container">
+            <div className="preview-container" id="studio-preview-capture">
               <img src={selectedProduct.image} alt={selectedProduct.name} />
               
-              {/* Generative Texture Canvas overlaying the bottle body */}
               <canvas 
                 ref={canvasRef}
                 width={300}
@@ -136,17 +199,14 @@ const CustomStudio = () => {
                 onMouseOut={endDrawing}
                 onMouseMove={draw}
               />
-              <div className="canvas-instruction">Drag to paint texture</div>
 
+              {/* Tightly bound container for true engraving bounds */}
               <div className="engraving-overlay">
                 <span 
-                  className="engraved-text"
+                  className={`engraved-text ${orientation === 'vertical' ? 'vertical' : ''}`}
                   style={{ 
                     fontFamily: fontStyle, 
                     color: engravingColor,
-                    // Simulate cylindrical wrapping
-                    transform: 'rotateX(5deg) scaleX(0.85) perspective(500px) rotateY(-10deg)',
-                    display: 'inline-block'
                   }}
                 >
                   {engravingText || 'YOUR NAME'}
@@ -186,6 +246,20 @@ const CustomStudio = () => {
             </div>
 
             <div className="control-group">
+              <label>Orientation</label>
+              <div className="font-options">
+                <button 
+                  className={`font-btn ${orientation === 'horizontal' ? 'active' : ''}`} 
+                  onClick={() => setOrientation('horizontal')}
+                >Horizontal</button>
+                <button 
+                  className={`font-btn ${orientation === 'vertical' ? 'active' : ''}`} 
+                  onClick={() => setOrientation('vertical')}
+                >Vertical</button>
+              </div>
+            </div>
+
+            <div className="control-group">
               <label>Select Font Style</label>
               <div className="font-options">
                 <button 
@@ -206,16 +280,20 @@ const CustomStudio = () => {
             <div className="control-group">
               <label>Text Color</label>
               <div className="color-options">
-                {['#ffffff', '#000000', '#d4af37', '#e5e4e2', '#b76e79'].map(color => (
+                {FANCY_COLORS.map(colorObj => (
                   <button 
-                    key={color}
-                    className={`color-swatch ${engravingColor === color ? 'active' : ''}`}
-                    style={{ backgroundColor: color }}
-                    onClick={() => setEngravingColor(color)}
-                    aria-label={`Select color ${color}`}
+                    key={colorObj.hex}
+                    className={`color-swatch ${engravingColor === colorObj.hex ? 'active' : ''}`}
+                    style={{ backgroundColor: colorObj.hex }}
+                    onClick={() => setEngravingColor(colorObj.hex)}
+                    aria-label={`Select color ${colorObj.name}`}
+                    title={colorObj.name}
                   />
                 ))}
               </div>
+              <span className="color-name-display">
+                {FANCY_COLORS.find(c => c.hex === engravingColor)?.name}
+              </span>
             </div>
 
             <div className="studio-price-box">
@@ -233,16 +311,84 @@ const CustomStudio = () => {
               </div>
             </div>
 
-            <MagneticButton>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <MagneticButton>
+                <button 
+                  className={`btn-primary studio-buy-btn ${isAdded ? 'added' : ''}`}
+                  onClick={handleAddToCart}
+                >
+                  {isAdded ? 'Added to Cart!' : 'Add Custom to Cart'}
+                </button>
+              </MagneticButton>
+              
               <button 
-                className={`btn-primary studio-buy-btn ${isAdded ? 'added' : ''}`}
-                onClick={handleAddToCart}
+                className="btn-secondary studio-pdf-btn"
+                onClick={generatePDF}
+                disabled={isGenerating}
               >
-                {isAdded ? 'Added to Cart!' : 'Add Custom to Cart'}
+                {isGenerating ? 'Generating...' : 'Download Blueprint (PDF)'}
               </button>
-            </MagneticButton>
+            </div>
 
           </motion.div>
+        </div>
+      </div>
+
+      {/* HIDDEN LUXURY PDF TEMPLATES */}
+      <div style={{ position: 'absolute', top: '-15000px', left: '-15000px', width: '800px', background: '#0a0a0a', pointerEvents: 'none' }}>
+        
+        {/* PAGE 1: LORE */}
+        <div id="pdf-page-1" className="pdf-template-page">
+          <div className="pdf-header">
+            <h1 style={{ fontFamily: 'serif' }}>{selectedProduct.name}</h1>
+            <div className="pdf-divider"></div>
+          </div>
+          
+          <div className="pdf-content">
+            <div className="pdf-section">
+              <h3>MATERIAL</h3>
+              <p>{selectedProduct.material}</p>
+            </div>
+            
+            <div className="pdf-section">
+              <h3>THE STORY</h3>
+              <p>{selectedProduct.story}</p>
+            </div>
+            
+            <div className="pdf-section">
+              <h3>MANUFACTURING</h3>
+              <p>{selectedProduct.manufacturing}</p>
+            </div>
+          </div>
+          <div className="pdf-footer">Awwwards Water Bottle Co. - Confidential Blueprint</div>
+        </div>
+
+        {/* PAGE 2: BLUEPRINT */}
+        <div id="pdf-page-2" className="pdf-template-page">
+          <div className="pdf-header">
+            <h1 style={{ fontFamily: 'serif' }}>Custom Blueprint</h1>
+            <div className="pdf-divider"></div>
+          </div>
+          
+          <div className="pdf-blueprint-body">
+            <div className="pdf-image-container">
+              <img id="pdf-captured-image" src="" alt="Custom Bottle" />
+            </div>
+            
+            <div className="pdf-specs">
+              <div className="spec-row"><span>Engraving Name:</span> <strong>{engravingText || 'None'}</strong></div>
+              <div className="spec-row"><span>Font Style:</span> <strong>{fontStyle === 'var(--font-family)' ? 'Modern' : fontStyle === 'serif' ? 'Classic' : 'Technical'}</strong></div>
+              <div className="spec-row"><span>Orientation:</span> <strong>{orientation}</strong></div>
+              <div className="spec-row"><span>Engraving Color:</span> <strong>{FANCY_COLORS.find(c => c.hex === engravingColor)?.name || engravingColor}</strong></div>
+              
+              <div className="pdf-receipt">
+                <div className="receipt-row"><span>Base Price</span> <span>{displayPrice(basePrice)}</span></div>
+                <div className="receipt-row"><span>Custom Studio Fee</span> <span>+{displayPrice(customFee)}</span></div>
+                <div className="receipt-total"><span>Total Transaction</span> <span>{displayPrice(basePrice + customFee)}</span></div>
+              </div>
+            </div>
+          </div>
+          <div className="pdf-footer">Awwwards Water Bottle Co. - 1 of 1 Edition</div>
         </div>
       </div>
     </div>

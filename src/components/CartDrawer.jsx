@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Minus, Plus, ShoppingBag } from 'lucide-react';
 import { useCart } from '../context/CartContext';
@@ -8,12 +9,13 @@ const CartDrawer = () => {
   const { 
     isCartOpen, setIsCartOpen, 
     cartItems, updateQuantity, removeFromCart, 
-    cartTotal, setIsCheckoutOpen 
+    cartTotal 
   } = useCart();
+  const navigate = useNavigate();
 
   const handleCheckout = () => {
     setIsCartOpen(false);
-    setIsCheckoutOpen(true);
+    navigate('/checkout-processing');
   };
 
   return (

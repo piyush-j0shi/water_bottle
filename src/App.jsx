@@ -9,8 +9,8 @@ import Contact from './pages/Contact';
 import Sustainability from './pages/Sustainability';
 import CustomStudio from './pages/CustomStudio';
 import ProductDetails from './pages/ProductDetails';
+import CheckoutStatus from './pages/CheckoutStatus';
 import CartDrawer from './components/CartDrawer';
-import CheckoutModal from './components/CheckoutModal';
 import SommelierChat from './components/SommelierChat';
 import CustomCursor from './components/CustomCursor';
 import { ThemeProvider } from './context/ThemeContext';
@@ -69,12 +69,12 @@ function App() {
                 <Route path="/sustainability" element={<Sustainability />} />
                 <Route path="/custom" element={<CustomStudio />} />
                 <Route path="/product/:id" element={<ProductDetails />} />
+                <Route path="/checkout-processing" element={<CheckoutStatus />} />
               </Routes>
             </main>
             
             <SommelierChat />
             <CartDrawer />
-            <CheckoutModal />
 
             <footer style={{ padding: '80px 0', textAlign: 'center', backgroundColor: 'var(--color-surface)', borderTop: '1px solid var(--color-border)' }}>
               <div className="container">
