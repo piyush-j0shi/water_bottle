@@ -42,6 +42,7 @@ const Navbar = () => {
           <Link to="/contact" className="nav-link">Contact</Link>
           <Link to="/sustainability" className="nav-link">Sustainability</Link>
           <Link to="/custom" className="nav-link">Studio</Link>
+          <Link to="/coming-soon" className="nav-link">Coming Soon</Link>
         </div>
 
         <div className="navbar-actions">
@@ -86,6 +87,7 @@ const Navbar = () => {
               <Link to="/contact" onClick={closeMobileMenu}>Contact</Link>
               <Link to="/sustainability" onClick={closeMobileMenu}>Sustainability</Link>
               <Link to="/custom" onClick={closeMobileMenu}>Studio</Link>
+              <Link to="/coming-soon" onClick={closeMobileMenu}>Coming Soon</Link>
               <div style={{ display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
                 <button className="theme-toggle-btn" onClick={toggleTheme} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   {theme === 'dark' ? <><Sun size={20} /> Light Mode</> : <><Moon size={20} /> Dark Mode</>}

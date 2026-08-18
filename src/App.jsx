@@ -8,6 +8,7 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import Sustainability from './pages/Sustainability';
 import CustomStudio from './pages/CustomStudio';
+import ComingSoon from './pages/ComingSoon';
 import ProductDetails from './pages/ProductDetails';
 import CheckoutStatus from './pages/CheckoutStatus';
 import CartDrawer from './components/CartDrawer';
@@ -68,6 +69,7 @@ function App() {
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/sustainability" element={<Sustainability />} />
                 <Route path="/custom" element={<CustomStudio />} />
+                <Route path="/coming-soon" element={<ComingSoon />} />
                 <Route path="/product/:id" element={<ProductDetails />} />
                 <Route path="/checkout-processing" element={<CheckoutStatus />} />
               </Routes>

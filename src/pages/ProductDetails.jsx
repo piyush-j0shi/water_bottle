@@ -56,9 +56,9 @@ const ProductDetails = () => {
         <div className="pdp-grid">
           <motion.div 
             className="pdp-image-section"
-            initial={{ opacity: 0, y: 50 }}
+            initial={{ opacity: 0, y: 60 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
           >
             <motion.div 
               className="pdp-main-image"
@@ -85,9 +85,9 @@ const ProductDetails = () => {
 
           <motion.div 
             className="pdp-info-section"
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.2, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           >
             <div className="pdp-vibe">{product.vibe} Collection</div>
             <div style={{ overflow: 'hidden' }}>
@@ -157,6 +157,18 @@ const ProductDetails = () => {
                     <span className="spec-label">Color</span>
                     <span className="spec-value">{product.color}</span>
                   </div>
+                  {product.capacity && (
+                    <div className="spec-item">
+                      <span className="spec-label">Capacity</span>
+                      <span className="spec-value">{product.capacity}</span>
+                    </div>
+                  )}
+                  {product.weight && (
+                    <div className="spec-item">
+                      <span className="spec-label">Weight</span>
+                      <span className="spec-value">{product.weight}</span>
+                    </div>
+                  )}
                 </motion.div>
               )}
 
